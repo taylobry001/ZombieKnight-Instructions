@@ -1,5 +1,4 @@
 import pygame
-from pygame import transform
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -8,22 +7,12 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, bullet_group, player):
         """Initialize the bullet"""
         super().__init__()
-        self.VELOCITY = 20
-        self.RANGE = 500
-        self.bullet_group = bullet_group
 
-        if player.velocity.x > 0:
-            self.image = pygame.transform.scale(pygame.image.load("images/bullet/bullet.png", (32,32)
-
-
-
+        #Set constant variables
+        # TODO: assign 20 to self.VELOCITY
+        # TODO: assign 500 to self.RANGE
 
         #Load image and get rect
-            if player.velocity.x > 0:
-                transform.scale(pygame.image.load("images/player/slash.png", (32,32)))
-            else:
-                transform.scale.flip(pygame.image.load("images/player/slash.png", )
-                self.VELOCITY =- 1 * self.VELOCITY
         # TODO: if player.velocity.x > 0:
             # TODO: assign pygame.transform.scale() to self.image with these 2 arguments
             #  1: pygame.image.load("images/player.slash.png")
@@ -42,7 +31,6 @@ class Bullet(pygame.sprite.Sprite):
 
         # TODO: call bullet_group.add() with this 1 argument
         # 1: self
-            bullet_group.add(self)
 
 
     def update(self):
