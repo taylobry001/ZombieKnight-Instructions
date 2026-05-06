@@ -18,29 +18,26 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
 
         #Set constant variables
-        # TODO: assign 2 to self.HORIZONTAL_ACCELERATION
-        # TODO: assign 0.15 to self.HORIZONTAL_FRICTION
-        # Gravity
-        # TODO: assign 0.8 to self.VERTICAL_ACCELERATION
-        # Determines how high the player can jump
-        # TODO: assign 18 to self.VERTICAL_JUMP_SPEED
-        # TODO: assign 100 to self.STARTING_HEALTH
+        self.HORIZONTAL_ACCELERATION = 2
+        self.HORIZONTAL_FRICTION = 0.15
 
-        #Animation frames
-        # TODO: assign load_frames() to self.move_right_sprites with these 3 arguments
-        #  1: "images/player/run"
-        #  2: RUN_FRAMES
-        #  3: (64, 64))
+        # Gravity
+        self.VERTICAL_ACCELERATION = 0.8
+
+
+        # Determines how high the player can jump
+        self.VERTICAL_JUMP_SPEED = 18
+        self.STARTING_HEALTH = 100
+        # Animation frames
+        load_frames("images/player/run", RUN_FRAMES),((64,64))
 
         # TODO: assign flip_frames to self.move_left_sprites with this 1 argument
         #  1: self.move_right_sprites
 
         # TODO: assign load_frames() to self.idle_right_sprites with these 3 arguments
-        #  1: "images/player/idle"
-        #  2: IDLE_FRAMES
-        #  3: (64, 64))
+        load_frames("images/player/idle", IDLE_FRAMES),((64,64))
 
-        # TODO: assign flip_frames() to self.idle_left_sprites with this 1 argument
+       flip_frames(self.idle_left_sprites) # TODO: assign flip_frames() to self.idle_left_sprites with this 1 argument
         #  1: self.idle_right_sprites
 
         # TODO: assign load_frames() to self.jump_right_sprites with these 3 arguments
@@ -68,11 +65,16 @@ class Player(pygame.sprite.Sprite):
         #  1: self.image
 
         #Attach sprite groups
+        self.platform_group = platform_group
+        self.portal_group = portal_group
+        self.bullet_group = bullet_group
         # TODO: assign platform_group to self.platform_group
         # TODO: assign portal_group to self.portal_group
         # TODO: assign bullet_group to self.bullet_group
 
         #Animation booleans
+        self.animate_jump = False
+        self.animate_fire = False
         # TODO: assign False to self.animate_jump
         # TODO: assign False to self.animate_fire
 
@@ -87,40 +89,34 @@ class Player(pygame.sprite.Sprite):
         #  1: "sounds/player_hit.wav"
 
         #Kinematics vectors
-        # TODO: assign vector() to self.position with these 2 arguments
-        #  1: x
-        #  2: y
+        vector(x,y)
 
-        # TODO: assign vector() to self.velocity with these 2 arguments
-        #  1: 0
-        #  2: 0
+        vector(0,0)
 
-        # TODO assign vector() to  self.acceleration with these 2 arguments
-        #  1: 0
-        #  2: self.VERTICAL_ACCELERATION
+        vector(0, self.VELOCITY_ACCELERATION)
+
 
         #Set initial player values
-        # TODO: assign self.STARTING_HEALTH TO self.health
-        # TODO: assign x to self.starting_x
-        # TODO: assign y to self.starting_y
+        self.STARTING_HEALTH = self.health
+        self.starting_x = x
+        self.starting_y = y
 
 
     def update(self):
         """Update the player"""
-        # TODO: call self.move()
-        # TODO: call self.check_collisions()
-        # TODO: call self.check_animations()
+        self.move()
+        self.check_collisions()
+        self.check_animations()
+
 
         #Update the player's mask
-        # TODO: assign pygame.mask.from_surface() to self.mask with this 1 argument
-        #  1: self.image
+        self.mask = pygame.mask.from_surface(self.image)
+
 
     def move(self):
         """Move the player"""
         # Set the acceleration vector
-        # TODO: assign vector() to self.acceleration with these 2 arguments
-        #  1: 0
-        #  2: self.VERTICAL_ACCELERATION
+        vector(0, self.VELOCITY_ACCELERTAION    )
 
         # If the user is pressing a key, set the x-component of the acceleration to be non-zero
         # TODO: assign pygame.key.get_pressed() to keys
@@ -145,9 +141,10 @@ class Player(pygame.sprite.Sprite):
                 #  2: 0.5
 
         # Apply friction before integrating
-        # TODO: subtract self.velocit.x * self.HORIZONTAL_FRICTION from self.acceleration.x
+        self.acceleration.x = self.velocity.x * self.HORIZONTAL_ACCELERATION
 
-        # TODO: call apply_motion() with 1 argument
+
+        apply_motion(self)
         #  1: self
 
 
@@ -206,6 +203,10 @@ class Player(pygame.sprite.Sprite):
 
     # noinspection PyTypeChecker
     def jump(self):
+        if pygame.sprite.spritecollide(self, self.platform_group, False ):
+            self.jump_sound.play()
+            self.velocity.y = self.VERTICAL_JUMP_SPEED - 1
+            self.animate_jump = True
         """Jump upwards if on a platform"""
         #Only jump if on a platform
         # TODO: if pygame.sprite.spritecollide(self, self.platform_group, False):
@@ -215,6 +216,9 @@ class Player(pygame.sprite.Sprite):
 
 
     def fire(self):
+        self.slash_sound.play()
+        Bullet(self.rect.centerx, self.rect.centery, self.bullet_group, self)
+        self.animate_fire = True
         """Fire a 'bullet' from a sword"""
         # TODO: call self.slash_sound.play()
         # TODO: call Bullet() with these 4 arguments
@@ -225,14 +229,17 @@ class Player(pygame.sprite.Sprite):
         # TODO: assign True to self.animate_fire
 
     def reset(self):
+        vector(0,0)
         """Reset the player's position"""
         # TODO: assign vector() to self.velocity with these 2 arguments
         #  1: 0
         #  2: 0
+        vector(self.starting_x, self.starting_y)
 
         # TODO: assign vector() to self.position with these 2 arguments
         #  1: self.starting_x
         #  2: self.starting_y
+        self.positon = self.rect.bottomleft
 
         # TODO: assign self.position to self.rect.bottomleft
 

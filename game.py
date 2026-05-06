@@ -149,18 +149,26 @@ class Game:
                     self.player.position.x -= 256 * zombie.direction
                     self.player.rect.bottomleft = self.player.position
                     #Move the player to not continually take damage
-                    # TODO: subtract 256*zombie.direction from self.player.position.x
-                    # TODO: assign self.player.position to self.player.rect.bottomleft
+
 
         #See if a player collided with a ruby
-        # TODO: if pygame.sprite.spritecollide(self.player, self.ruby_group, True):
-            # TODO: call self.ruby_pickup_sound.play()
-            # TODO: add 100 to self.score
-            # TODO: add 10 to self.player.health
-            # TODO: if self.player.health > self.player.STARTING_HEALTH:
-                # TODO: assign self.player.STARTING_HEALTH to self.player.health
+        if pygame.sprite.spritecollide(self.player, self.ruby_group, False):
+            self.score += 100
+            self.player.health += 10
+            self.ruby_pickup_sound.play()
+            if self.player.health > self.player.STARTING_HEALTH:
+                self.player.STARTING_HEALTH = self.player.health
+
 
         #See if a living zombie collided with a ruby
+        for zombie in self.zombie_group:
+            if not zombie.is_dead:
+                if pygame.sprite.spritecollide(zombie, self.ruby_group, True):
+                    self.lost_ruby_sound.play()
+                    Zombie(self.platform_group, self.portal_group, self.round_number, 5 + self.round_number)
+                    self.zombie_group.add(Zombie)
+
+
         # TODO: for zombie in self.zombie_group:
             # TODO: if not zombie.is_dead:
                 # TODO: if pygame.sprite.spritecollide(zombie, self.ruby_group, True):
@@ -176,12 +184,15 @@ class Game:
 
     def check_round_completion(self):
         if self.round_timer == 0:
-
             self.start_new_round()
 
 
-
     def check_game_over(self):
+        if self.player <= 0:
+            self.game_over = True
+            pygame.mixer.music.stop()
+            self.pause_game("GAME OVER! Final Score: " + str(self.score), "Press 'Enter' to continue")
+            self.reset_game()
         """Check to see if the player lost the game"""
         # TODO: if self.player.health <= 0:
             # TODO: call pygame.mixer.music.stop()
@@ -192,14 +203,23 @@ class Game:
 
 
     def start_new_round(self):
+        self.round_time += 1
         """Start a new night"""
         # TODO: add 1 to self.round_number
 
         #Decrease zombie creation time...more zombies
+        if self.round_number < self.STARTING_ZOMBIE_CREATION_TIME:
+            self.zombe_creation_time -= 1
         # TODO: if self.round_number < self.STARTING_ZOMBIE_CREATION_TIME:
             # TODO: subtract 1 from self.zombie_creation_time
 
         #Reset round values
+        self.START_ROUND_TIME = self.round_time
+        self.zombie_group.empty()
+        self.ruby_group.empty()
+        self.bullet_group.empty()
+        self.player.reset()
+        self.pause_game("You Won! Final Score: " + str(self.score), "Press 'Enter' to continue")
         # TODO: assign self.STARTING_ROUND_TIME to self.round_time
 
         # TODO: call self.zombie_group.empty()
@@ -214,10 +234,14 @@ class Game:
 
 
     def pause_game(self, main_text, sub_text):
+        pygame.mixer.music.pause()
         """Pause the game"""
         # TODO: call pygame.mixer.music.pause()
 
         #Create main pause text
+        self.title_font.render(main_text, True, GREEN)
+        main_rect.center(main_text.get_rect())
+        main_rect.center (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
         # TODO: assign self.title_font.render() to main_text with these 3 arguments
         #  1: main_text
         #  2: True
@@ -226,6 +250,9 @@ class Game:
         # TODO: assign (WINDOW_WIDTH//2, WINDOW_HEIGHT//2) to main_rect.center
 
         #Create sub pause text
+        self.title_font.render(sub_text, True, WHITE)
+        sub_text.center(sub_text.get_rect())
+        sub_rect.center(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 64)
         # TODO: assign self.title_font.render() to sub_text with these 3 arguments
         #  1: sub_text
         #  2: True

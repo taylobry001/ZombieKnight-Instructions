@@ -7,6 +7,7 @@ FPS = 60
 
 
 # TODO: assign pygame.math.Vector2 to vector
+vector= pygame.math.Vector2
 
 display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 display_caption = pygame.display.set_caption("Zombie Knight")
