@@ -1,19 +1,35 @@
-self.ruby_sprites = load_frames("image/ruby", RUBY_FRAMES, (64, 64))
+import pygame
 
-self.current_sprite = 0
-self.image = self.ruby_sprites[self.current_sprite]
-self.rect = self.image.get_rect()
-self.rect.bottomleft = (x, y)
-
-main_group.add(self)
+from helpers import load_frames, RUBY_FRAMES
 
 
-self.animate(self.ruby_sprites, 0.25)
+class RubyMaker(pygame.sprite.Sprite):
+    """A tile that is animated.  A ruby will be generated here."""
+
+    def __init__(self, x, y, main_group):
+        """Initialize the ruby maker"""
+        super().__init__()
+
+        #Animation frames
+        self.ruby_sprites = load_frames("image/ruby", RUBY_FRAMES, (64, 64))
+
+        #Load image and get rect
+        self.current_sprite = 0
+        self.image = self.ruby_sprites[self.current_sprite]
+        self.rect = self.image.get_rect()
+        self.rect.bottomleft = (x, y)
+
+        #Add to the main group for drawing purposes
+        main_group.add(self)
 
 
-if self.current_sprite < len(sprite_list) - 1:
-    self.current_sprite += speed
-else:
-    self.current_sprite = 0
+    def update(self):
+        self.animate(self.ruby_sprites, 0.25)
 
-self.image = sprite_list[int(self.current_sprite)]
+    def animate(self, sprite_list, speed):
+        if self.current_sprite < len(sprite_list) - 1:
+            self.current_sprite += speed
+        else:
+            self.current_sprite = 0
+
+        self.image = sprite_list[int(self.current_sprite)]

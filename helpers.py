@@ -1,10 +1,33 @@
+import pygame
+
+from settings import WINDOW_WIDTH, WINDOW_HEIGHT
+
+
+RUBY_FRAMES = [f"tile00{i}.png" for i in range(7)]
+
+
+def load_frames(folder, filenames, size):
+
+    return [
+        pygame.transform.scale(pygame.image.load(f"{folder}/{name}"), size)
+        for name in filenames
+    ]
+
+
+def flip_frames(frames):
+
+    return [pygame.transform.flip(s, True, False) for s in frames]
+
+
 def advance_frame(current, sprite_list, speed):
+
     if current < len(sprite_list) - 1:
         return current + speed, False
     return 0, True
 
 
 def teleport(sprite):
+
     if sprite.position.x > WINDOW_WIDTH // 2:
         sprite.position.x = 86
     else:

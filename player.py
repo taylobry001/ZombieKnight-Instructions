@@ -1,4 +1,4 @@
-```python id="p7x2ka"
+
 import pygame
 
 from bullet import Bullet
@@ -15,7 +15,7 @@ RUN_FRAMES = [f"Run ({i}).png" for i in range(1, 11)]
 IDLE_FRAMES = [f"Idle ({i}).png" for i in range(1, 11)]
 JUMP_FRAMES = [f"Jump ({i}).png" for i in range(1, 11)]
 ATTACK_FRAMES = [f"Attack ({i}).png" for i in range(1, 11)]
-
+python_id="p7x2ka"
 
 class Player(pygame.sprite.Sprite):
     """A class the user can control"""
@@ -307,4 +307,4 @@ class Player(pygame.sprite.Sprite):
                 self.animate_fire = False
 
         self.image = sprite_list[int(self.current_sprite)]
-```
+
