@@ -99,19 +99,21 @@ class Game:
                 self.zombie_group.add(zombie)
 
     def check_collisions(self):
-        collisions = pygame.sprite.groupcollide(self.bullet_group, self.zombie_group, True, False)
-
-        if collisions:
-            for zombie_list in collisions.values():
-                for zombie in zombie_list:
+        """Check collisions that affect gameplay"""
+        #See if any bullet in the bullet group hit a zombie in the zombie group
+        collision_dict = pygame.sprite.groupcollide(self.bullet_group, self.zombie_group, True, False)
+        if collision_dict:
+            for zombies in collision_dict.values():
+                for zombie in zombies:
                     zombie.hit_sound.play()
                     zombie.is_dead = True
                     zombie.animate_death = True
 
+        #See if a player stomped a dead zombie to finish it or collided with a live zombie to take damage
         collision_list = pygame.sprite.spritecollide(self.player, self.zombie_group, False)
-
         if collision_list:
             for zombie in collision_list:
+                #The zombie is dead; stomp it
                 if zombie.is_dead:
                     zombie.kick_sound.play()
                     zombie.kill()
@@ -119,30 +121,29 @@ class Game:
 
                     ruby = Ruby(self.platform_group, self.portal_group)
                     self.ruby_group.add(ruby)
+                #The zombie isn't dead, so take damage
                 else:
                     self.player.health -= 20
                     self.player.hit_sound.play()
-                    self.player.position.x -= 256 * zombie.direction
+                    #Move the player to not continually take damage
+                    self.player.position.x -= 256*zombie.direction
                     self.player.rect.bottomleft = self.player.position
 
+        #See if a player collided with a ruby
         if pygame.sprite.spritecollide(self.player, self.ruby_group, True):
+            self.ruby_pickup_sound.play()
             self.score += 100
             self.player.health += 10
-            self.ruby_pickup_sound.play()
             if self.player.health > self.player.STARTING_HEALTH:
                 self.player.health = self.player.STARTING_HEALTH
 
+        #See if a living zombie collided with a ruby
         for zombie in self.zombie_group:
             if not zombie.is_dead:
                 if pygame.sprite.spritecollide(zombie, self.ruby_group, True):
                     self.lost_ruby_sound.play()
-                    new_zombie = Zombie(
-                        self.platform_group,
-                        self.portal_group,
-                        self.round_number,
-                        5 + self.round_number
-                    )
-                    self.zombie_group.add(new_zombie)
+                    zombie = Zombie(self.platform_group, self.portal_group, self.round_number, 5 + self.round_number)
+                    self.zombie_group.add(zombie)
 
     def check_round_completion(self):
         if self.round_time <= 0:

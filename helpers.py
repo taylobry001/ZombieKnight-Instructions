@@ -8,11 +8,7 @@ RUBY_FRAMES = [f"tile00{i}.png" for i in range(7)]
 
 def load_frames(folder, filenames, size):
 
-    return [
-        pygame.transform.scale(pygame.image.load(f"{folder}/{name}"), size)
-        for name in filenames
-    ]
-
+    return [pygame.transform.scale(pygame.image.load(f"{folder}/{name}"), size) for name in filenames]
 
 def flip_frames(frames):
 

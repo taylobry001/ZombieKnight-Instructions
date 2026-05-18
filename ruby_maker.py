@@ -11,7 +11,7 @@ class RubyMaker(pygame.sprite.Sprite):
         super().__init__()
 
         #Animation frames
-        self.ruby_sprites = load_frames("image/ruby", RUBY_FRAMES, (64, 64))
+        self.ruby_sprites = load_frames("images/ruby", RUBY_FRAMES, (64, 64))
 
         #Load image and get rect
         self.current_sprite = 0
